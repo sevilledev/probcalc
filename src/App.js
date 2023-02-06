@@ -1,6 +1,5 @@
-import './styles/App.css'
-import { Calc1 } from './calc1'
-import { Calc2 } from './calc2'
+import { Calc1 } from './components/calc1'
+import { Calc2 } from './components/calc2'
 
 
 export const App = () => {

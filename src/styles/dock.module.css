@@ -1,0 +1,84 @@
+.dock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    margin-left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+    height: 70px;
+    background-color: var(--secondary-gb);
+    border-radius: 14px;
+    padding: 0 6px;
+}
+
+.dockMenu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 6px;
+    background-color: var(--system-gray5);
+    height: 58px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.dockMenu > h5 {
+    font-size: 22px;
+}
+
+.dockMenu > h3 {
+    font-size: 35px;
+    margin-right: 6px;
+}
+
+.dockInput {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--system-gray4);
+    height: 58px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+.formInput {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.formInput > input {
+    height: 35px;
+    width: 40px;
+    margin: 0 5px;
+    font-size: 20px;
+    text-align: right;
+    border-radius: 6px;
+    outline: none;
+    border: 1px solid #c5c5c9;
+    font-variation-settings: "wght" 600;
+    background-color: var(--thick-material);
+    color: var(--primary-label);
+}
+
+.formInput > label {
+    color: var(--primary-label);
+}
+
+.formInput > button {
+    height: 35px;
+    margin-left: 15px;
+    font-size: 22px;
+    font-variation-settings: "wght" 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: var(--primary-tint);
+}
