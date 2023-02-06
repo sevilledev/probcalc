@@ -152,8 +152,8 @@ export const Calc2 = () => {
 
             <MathJax.Node formula={`\\ 
                     RR = p(1)(\\lambda + \\kappa) + k \\sum_{m=2}^{s} p(m) \\qquad
-                    P_{c} = P(0)  \\qquad
-                    S_{av} = \\sum_{m=1}^{s} mp(0) \\qquad
+                    P_{c} = p(0)  \\qquad
+                    S_{av} = \\sum_{m=1}^{s} mp(m) \\qquad
                     V_{av} = p(0) \\sum_{m=1}^{s} m \\alpha_{m} \\qquad
                 \\`} />
 
