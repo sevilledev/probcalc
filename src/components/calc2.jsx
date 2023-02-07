@@ -31,18 +31,18 @@ export const Calc2 = () => {
         set_res([RR(), P_c, S_av(), V_av()])
     }
 
-    const alfa = (m, alpha1, d) => {
-        return alpha1 + (m - 1) * d
+    const alpha = (m, alpha1, d) => {
+        return +alpha1 + (m - 1) * d
     }
 
     const nu = (m) => {
-        return (+nu_init) * alfa(m, alpha1, d)
+        return (+nu_init) * alpha(m, alpha1, d)
     }
 
     const r = (m) => {
         if (m === 0) { return 1 }
-        else if (m === s) { return (nu(s) / lambda + kappa) }
-        else if (1 <= m && m <= s - 1) { return (1 / (lambda + kappa)) * (lambda * r(m + 1) + nu(m)) }
+        else if (m == s) { return (nu(+s) / +lambda + +kappa) }
+        else if (1 <= m && m <= s - 1) { return (1 / (+lambda + +kappa)) * (+lambda * r(m + 1) + nu(+m)) }
     }
 
     const p = (m) => {
@@ -61,9 +61,13 @@ export const Calc2 = () => {
         for (let i = 2; i <= s; i++) {
             sum += p(i)
         }
-        return (lambda + kappa) * p(1) + kappa * sum
+        return (+lambda + +kappa) * p(1) + +kappa * sum
     }
 
+    useEffect(() => {
+        console.log(...res)
+    }, [res])
+    
     const P_c = p(0)
 
     const S_av = () => {
@@ -77,7 +81,7 @@ export const Calc2 = () => {
     const V_av = () => {
         let sum = 0
         for (let i = 1; i <= s; i++) {
-            sum += i * alfa(i, alpha1, d)
+            sum += i * alpha(i, alpha1, d)
         }
         return p(0) * sum
     }
