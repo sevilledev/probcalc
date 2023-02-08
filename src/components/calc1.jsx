@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import MathJax from 'react-mathjax'
+import { Dock } from './dock'
+import styApp from '../styles/app.module.css'
+import styDock from '../styles/dock.module.css'
 
 
 export const Calc1 = () => {
@@ -8,7 +11,7 @@ export const Calc1 = () => {
     const [lambda, set_lambda] = useState(3)
     const [s, set_s] = useState(8)
     const [S, set_S] = useState(10)
-    const [res, set_res] = useState([0, 0, 0, 0])
+    const [res, set_res] = useState(new Array(4).fill(0))
 
 
     const onChange = (e, setState) => {
@@ -24,8 +27,6 @@ export const Calc1 = () => {
         set_S(+S)
 
         set_res([RR, P_c, S_av(), V_av()])
-
-        console.log({ nu, kappa, lambda, s, S })
     }
 
 
@@ -76,33 +77,34 @@ export const Calc1 = () => {
 
     return (
         <div>
-            <div className='form'>
-                <div className='form-input'>
-                    <label><MathJax.Node formula={`\\nu`} /></label>
-                    <input type='text' name='nu' value={nu} onChange={(e) => onChange(e, set_nu)} />
+            <Dock>
+                <div className={styDock.form}>
+                    <div className={styDock.formInput}>
+                        <label><MathJax.Node formula={`\\nu`} /></label>
+                        <input type='text' name='nu' value={nu} onChange={(e) => onChange(e, set_nu)} />
+                    </div>
+                    <div className={styDock.formInput}>
+                        <label><MathJax.Node formula={`\\ \\kappa \\`} /></label>
+                        <input type='text' name='kappa' value={kappa} onChange={(e) => onChange(e, set_kappa)} />
+                    </div>
+                    <div className={styDock.formInput}>
+                        <label><MathJax.Node formula={`\\ \\lambda \\`} /></label>
+                        <input type='text' name='lambda' value={lambda} onChange={(e) => onChange(e, set_lambda)} />
+                    </div>
+                    <div className={styDock.formInput}>
+                        <label><MathJax.Node formula={`\\ s \\`} /></label>
+                        <input type='text' name='s' value={s} onChange={(e) => onChange(e, set_s)} />
+                    </div>
+                    <div className={styDock.formInput}>
+                        <label><MathJax.Node formula={`\\ S \\`} /></label>
+                        <input type='text' name='S' value={S} onChange={(e) => onChange(e, set_S)} />
+                    </div>
+                    <div className={styDock.formInput}>
+                        <button onClick={() => calc()}>Go</button>
+                    </div>
                 </div>
-                <div className='form-input'>
-                    <label><MathJax.Node formula={`\\ \\kappa \\`} /></label>
-                    <input type='text' name='kappa' value={kappa} onChange={(e) => onChange(e, set_kappa)} />
-                </div>
-                <div className='form-input'>
-                    <label><MathJax.Node formula={`\\ \\lambda \\`} /></label>
-                    <input type='text' name='lambda' value={lambda} onChange={(e) => onChange(e, set_lambda)} />
-                </div>
-                <div className='form-input'>
-                    <label><MathJax.Node formula={`\\ s \\`} /></label>
-                    <input type='text' name='s' value={s} onChange={(e) => onChange(e, set_s)} />
-                </div>
-                <div className='form-input'>
-                    <label><MathJax.Node formula={`\\ S \\`} /></label>
-                    <input type='text' name='S' value={S} onChange={(e) => onChange(e, set_S)} />
-                </div>
-                <div className='form-input'>
-                    <button onClick={() => calc()}>Calculate</button>
-                </div>
-            </div>
-
-            <div className='results'>
+            </Dock>
+            <div className={styApp.results}>
                 <MathJax.Node formula={`\\ 
                     RR = ${res[0]} \\\\
                     P_{c} = ${res[1]} \\\\

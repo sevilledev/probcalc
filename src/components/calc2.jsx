@@ -12,7 +12,7 @@ export const Calc2 = () => {
     const [s, set_s] = useState(5)
     const [alpha1, set_alpha1] = useState(0.2)
     const [d, set_d] = useState(0)
-    const [res, set_res] = useState([0, 0, 0, 0])
+    const [res, set_res] = useState(new Array(4).fill(0) )
 
 
     const onChange = (e, setState) => {
@@ -63,10 +63,7 @@ export const Calc2 = () => {
         }
         return (+lambda + +kappa) * p(1) + +kappa * sum
     }
-
-    useEffect(() => {
-        console.log(...res)
-    }, [res])
+    
     
     const P_c = p(0)
 
