@@ -41,8 +41,8 @@ export const Calc2 = () => {
 
     const r = (m) => {
         if (m === 0) { return 1 }
-        else if (m == s) { return (nu(+s) / +lambda + +kappa) }
-        else if (1 <= m && m <= s - 1) { return (1 / (+lambda + +kappa)) * (+lambda * r(m + 1) + nu(+m)) }
+        else if (m == s) { return (nu(+s) / (+lambda + +kappa)) }
+        else if (1 <= m && m <= s - 1) { return  ((+lambda * r(m + 1)) + nu(+m)) / (+lambda + +kappa) }
     }
 
     const p = (m) => {
@@ -51,6 +51,7 @@ export const Calc2 = () => {
             for (let i = 0; i <= s; i++) {
                 sum += r(i)
             }
+            console.log(sum)
             return 1 / sum
         }
         else { return r(m) * p(0) }
