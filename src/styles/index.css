@@ -15,17 +15,7 @@ body,
 *:after {
   margin: 0;
   color: var(--primary-label);
-  /* font-family: 'Inter', Helvetica, Arial, sans-serif !important; */
 }
-
-/* h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-}
-
-span {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-} */
 
 body {
   margin: 0;
@@ -46,9 +36,31 @@ input, button {
   src: url('/src/assets/fonts/Inter.ttf') format('truetype');
 }
 
+.container {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 768px) {
+  .container {
+      width: 750px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+      width: 970px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+      width: 1030px;
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
-
     --primary-label:        #000000;
     --secondary-label:      #3C3C4399;
     --tertiary-label:       #3C3C434D;
