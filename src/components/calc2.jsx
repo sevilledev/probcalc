@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import MathJax from 'react-mathjax'
 import { Dock } from './dock'
 import styApp from '../styles/app.module.css'
@@ -32,7 +32,8 @@ export const Calc2 = () => {
     }
 
     const alpha = (m, alpha1, d) => {
-        return +alpha1 + (m - 1) * d
+        console.log(+alpha1 + (+m - 1) * +d)
+        return +alpha1 + (+m - 1) * +d
     }
 
     const nu = (m) => {
@@ -62,7 +63,7 @@ export const Calc2 = () => {
         for (let i = 2; i <= s; i++) {
             sum += p(i)
         }
-        return (+lambda + +kappa) * p(1) + +kappa * sum
+        return ((+lambda + +kappa) * p(1)) + (+kappa * sum)
     }
     
     

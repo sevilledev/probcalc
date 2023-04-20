@@ -1,4 +1,4 @@
-import { NavLink, Link, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 
 const sty = {
@@ -57,6 +57,9 @@ export const Navbar = () => {
                     </button>
                     <button style={sty.button}>
                         <NavLink to={'/calc2'} style={({ isActive }) => isActive ? sty.activeNav : sty.nav}>Calc 2</NavLink>
+                    </button>
+                    <button style={sty.button}>
+                        <NavLink to={'/calc3'} style={({ isActive }) => isActive ? sty.activeNav : sty.nav}>Calc 3</NavLink>
                     </button>
                 </div>
             </nav>
