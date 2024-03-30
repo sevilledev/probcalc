@@ -32,7 +32,6 @@ export const Calc2 = () => {
     }
 
     const alpha = (m, alpha1, d) => {
-        console.log(+alpha1 + (+m - 1) * +d)
         return +alpha1 + (+m - 1) * +d
     }
 
@@ -52,7 +51,6 @@ export const Calc2 = () => {
             for (let i = 0; i <= s; i++) {
                 sum += r(i)
             }
-            console.log(sum)
             return 1 / sum
         }
         else { return r(m) * p(0) }
