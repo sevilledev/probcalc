@@ -12,7 +12,7 @@ export const App = () => {
 			<Navbar />
 			<Routes>
                 <Route path='/*' element={<Calc3 />} />
-                <Route exact path='/' element={<Calc3 />} />
+                <Route exact path='/' element={<Calc4 />} />
 				<Route path='/calc1' element={<Calc1 />} />
 				<Route path='/calc2' element={<Calc2 />} />
 				<Route path='/calc3' element={<Calc3 />} />
