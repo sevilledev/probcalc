@@ -61,6 +61,9 @@ export const Navbar = () => {
                     <button style={sty.button}>
                         <NavLink to={'/calc3'} style={({ isActive }) => isActive ? sty.activeNav : sty.nav}>Calc 3</NavLink>
                     </button>
+                    <button style={sty.button}>
+                        <NavLink to={'/calc4'} style={({ isActive }) => isActive ? sty.activeNav : sty.nav}>Calc 4</NavLink>
+                    </button>
                 </div>
             </nav>
         // </div>

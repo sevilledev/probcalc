@@ -1,8 +1,9 @@
+import { Routes, Route } from 'react-router-dom'
+import {Navbar} from './components/navbar'
 import { Calc1 } from './components/calc1'
 import { Calc2 } from './components/calc2'
 import { Calc3 } from './components/calc3'
-import { Routes, Route } from 'react-router-dom'
-import {Navbar} from './components/navbar'
+import { Calc4 } from './components/calc4'
 
 
 export const App = () => {
@@ -15,6 +16,7 @@ export const App = () => {
 				<Route path='/calc1' element={<Calc1 />} />
 				<Route path='/calc2' element={<Calc2 />} />
 				<Route path='/calc3' element={<Calc3 />} />
+				<Route path='/calc4' element={<Calc4 />} />
 			</Routes>
 		</>
 	)
