@@ -52,7 +52,7 @@ export const Calc4 = () => {
             let s = 0
 
             for (let k = 1; k <= m - 1 - Q; k++) {
-                s += a(k) * (1 + +nu / +lambda) ** (m - 1 - Q - k)
+                s += a(k) * (1 + +kappa / +lambda) ** (m - 1 - Q - k)
             }
 
             return a(s + 1)((1 + (+kappa) / (+lambda)) ** (m - 1 - s)) - s
@@ -61,7 +61,7 @@ export const Calc4 = () => {
 
 
     const b = (m) => {
-        return (+nu / +lambda) * (1 + +kappa / +lambda) ** (m - 1 - Q)
+        return (+nu / +lambda) * ((1 + +kappa / +lambda) ** (m - 1 - Q))
     }
 
 
@@ -83,7 +83,8 @@ export const Calc4 = () => {
         let sum = 0
         for (let i = 1; i <= S; i++) {
             let r = p(i)
-            console.log({ i, r })
+            let t = `p(${i})`
+            console.log({ i, kappa, [t]: r })
             sum += i * r
         }
         return sum
@@ -146,7 +147,7 @@ export const Calc4 = () => {
                         \\begin{cases}
                             (1 + \\frac{\\kappa + \\nu}{\\lambda})^{m}                                                                                   & \\qquad \\text{if}\\quad 1 \\leq m \\leq s\\\\
                             (1 + \\frac{\\kappa}{\\lambda})^{m - s}                                                                                      & \\qquad \\text{if}\\quad s + 1 \\leq m \\leq Q - 1\\\\
-                            a_{s + 1}(1 + \\frac{\\kappa}{\\lambda})^{m - s} - \\sum_{k=1}^{m - Q} a_{k}(1 + \\frac{\\nu}{\\lambda})^{m - Q - k}      & \\qquad \\text{if}\\quad Q \\leq m \\leq S - 1\\\\
+                            a_{s + 1}(1 + \\frac{\\kappa}{\\lambda})^{m - s} - \\sum_{k=1}^{m - Q} a_{k}(1 + \\frac{\\kappa}{\\lambda})^{m - Q - k}      & \\qquad \\text{if}\\quad Q \\leq m \\leq S - 1\\\\
                         \\end{cases}
                 \\`} />
 
@@ -157,7 +158,7 @@ export const Calc4 = () => {
 
 
             <MathJax.Node formula={`\\ 
-                    p(0) = \\frac{1 + \\frac{\\kappa}{\\lambda} \\sum_{m=1}^{S}a_{m}}{1 + \\frac{\\kappa + \\nu}{\\lambda} \\sum_{m=1}^{S}a_{m} - \\sum_{m=Q+1}^{S}b_{m}}
+                    p(0) = \\frac{1 + \\frac{\\kappa}{\\lambda} \\sum_{m=1}^{S}a_{m}}{1 + (\\frac{\\kappa + \\nu}{\\lambda}) \\sum_{m=1}^{S}a_{m} - \\sum_{m=Q+1}^{S}b_{m}}
                 \\`} />
 
 
