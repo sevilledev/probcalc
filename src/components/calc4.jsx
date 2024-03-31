@@ -73,7 +73,7 @@ export const Calc4 = () => {
     }
 
 
-    const RR = () => { return (+lambda + +kappa) * (1 - p(0)) }
+    const RR = () => { return +lambda * p(s + 1) + kappa * (1 - p(0)) }
 
 
     const P_l = p(0)
@@ -143,17 +143,17 @@ export const Calc4 = () => {
 
 
             <MathJax.Node formula={`\\ 
-                    a_{m+1} =
+                    a_{m} =
                         \\begin{cases}
-                            (1 + \\frac{\\kappa + \\nu}{\\lambda})^{m}                                                                                   & \\qquad \\text{if}\\quad 1 \\leq m \\leq s\\\\
-                            (1 + \\frac{\\kappa}{\\lambda})^{m - s}                                                                                      & \\qquad \\text{if}\\quad s + 1 \\leq m \\leq Q - 1\\\\
-                            a_{s + 1}(1 + \\frac{\\kappa}{\\lambda})^{m - s} - \\sum_{k=1}^{m - Q} a_{k}(1 + \\frac{\\kappa}{\\lambda})^{m - Q - k}      & \\qquad \\text{if}\\quad Q \\leq m \\leq S - 1\\\\
+                            (1 + \\frac{\\kappa + \\nu}{\\lambda})^{m-1}                                                                                             & \\qquad \\text{if}\\quad 2 \\leq m \\leq s + 1\\\\
+                            (1 + \\frac{\\kappa}{\\lambda})^{m - 1 - s}                                                                                              & \\qquad \\text{if}\\quad s + 2 \\leq m \\leq Q\\\\
+                            a_{s + 1}(1 + \\frac{\\kappa}{\\lambda})^{m - 1 - s} - \\sum_{k=1}^{m - 1 - Q} a_{k}(1 + \\frac{\\kappa}{\\lambda})^{m - 1 - Q - k}      & \\qquad \\text{if}\\quad Q + 1 \\leq m \\leq S\\\\
                         \\end{cases}
                 \\`} />
 
 
             <MathJax.Node formula={`\\ 
-                    b_{m+1} = \\frac{\\nu}{\\lambda}(1 + \\frac{\\kappa}{\\lambda})^{m - Q} \\qquad Q \\leq m \\leq S - 1\\\\
+                    b_{m} = \\frac{\\nu}{\\lambda}(1 + \\frac{\\kappa}{\\lambda})^{m - 1 - Q} \\qquad Q + 1 \\leq m \\leq S\\\\
                 \\`} />
 
 
@@ -168,16 +168,16 @@ export const Calc4 = () => {
 
 
             <MathJax.Node formula={`\\ 
-                    p(m + 1) =
+                    p(m) =
                         \\begin{cases}
-                            a_{m+1} \\space p(1)                              & \\qquad \\text{if}\\quad 1 \\leq m \\leq Q - 1\\\\
-                            a_{m+1} \\space p(1) - b_{m+1} \\space p(0)       & \\qquad \\text{if}\\quad Q \\leq m \\leq S - 1\\\\
+                            a_{m} \\space p(1)                              & \\qquad \\text{if}\\quad 2 \\leq m \\leq Q\\\\
+                            a_{m} \\space p(1) - b_{m} \\space p(0)         & \\qquad \\text{if}\\quad Q + 1 \\leq m \\leq S\\\\
                         \\end{cases}
                 \\`} />
 
 
             <MathJax.Node formula={`\\ 
-                    RR = (\\lambda + \\kappa)(1 - p(0)) \\qquad
+                    RR = \\lambda p(s + 1) + \\kappa(1 - p(0)) \\qquad
                     P_{l} = p(0)  \\qquad
                     S_{av} = \\sum_{m=1}^{S} mp(m) \\qquad
                 \\`} />
