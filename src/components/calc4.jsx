@@ -7,10 +7,10 @@ import styDock from '../styles/dock.module.css'
 
 export const Calc4 = () => {
     const [lambda, set_lambda] = useState(10)
-    const [kappa, set_kappa] = useState(0.5)
-    const [nu, set_nu] = useState(15)
-    const [s, set_s] = useState(20)
-    const [S, set_S] = useState(50)
+    const [kappa, set_kappa] = useState(0.3)
+    const [nu, set_nu] = useState(5)
+    const [s, set_s] = useState(5)
+    const [S, set_S] = useState(15)
 
     const [run, set_Run] = useState(true)
 
@@ -46,16 +46,19 @@ export const Calc4 = () => {
 
 
     const a = (m) => {
-        if (2 <= m <= s + 1) { return (1 + (+kappa + nu) / (+lambda)) ** (m - 1) }
-        else if (s + 2 <= m <= Q) { return (1 + (+kappa) / (+lambda)) ** (m - 1 - s) }
-        else if (Q + 1 <= m <= S) {
-            let s = 0
+        if (2 <= m && m <= s + 1) { return (1 + (+kappa + nu) / (+lambda)) ** (m - 1) }
+        else if (s + 2 <= m && m <= Q) { return (1 + (+kappa) / (+lambda)) ** (m - 1 - s) }
+        else if (Q + 1 <= m && m <= S) {
+            let t = 0
 
-            for (let k = 1; k <= m - 1 - Q; k++) {
-                s += a(k) * (1 + +kappa / +lambda) ** (m - 1 - Q - k)
+            for (let k = 2; k <= m - 1 - Q; k++) {
+                console.log(a(k), k)
+                t += a(k) * (1 + kappa / +lambda) ** (m - 1 - Q - k)
             }
 
-            return a(s + 1)((1 + (+kappa) / (+lambda)) ** (m - 1 - s)) - s
+            console.log({ t })
+
+            return a(s + 1) * ((1 + (+kappa) / (+lambda)) ** (m - 1 - s)) - (+nu / +lambda) * t
         }
     }
 
@@ -66,10 +69,10 @@ export const Calc4 = () => {
 
 
     const p = (m) => {
-        if (m === 0) { return (1 + (+kappa / +lambda) * sum(1, +S, a)) / (1 + ((+kappa + nu) / +lambda) * sum(1, +S, a) - sum(Q + 1, +S, b)) }
+        if (m === 0) { return (1 + (+kappa / +lambda) * sum(2, +S, a)) / (1 + ((+kappa + nu) / +lambda) * sum(2, +S, a) - sum(Q + 1, +S, b)) }
         else if (m === 1) { return p(0) * (+kappa + nu) / +lambda - (+kappa / +lambda) }
-        else if (2 <= m <= Q) { return a(m) * p(1) }
-        else if (Q + 1 <= m <= S) { return a(m) * p(1) - b(m) * p(0) }
+        else if (2 <= m && m <= Q) { return a(m) * p(1) }
+        else if (Q + 1 <= m && m <= S) { return a(m) * p(1) - b(m) * p(0) }
     }
 
 
@@ -84,7 +87,7 @@ export const Calc4 = () => {
         for (let i = 1; i <= S; i++) {
             let r = p(i)
             let t = `p(${i})`
-            console.log({ i, kappa, [t]: r })
+            // console.log({ i, kappa, [t]: r })
             sum += i * r
         }
         return sum
@@ -147,7 +150,7 @@ export const Calc4 = () => {
                         \\begin{cases}
                             (1 + \\frac{\\kappa + \\nu}{\\lambda})^{m-1}                                                                                             & \\qquad \\text{if}\\quad 2 \\leq m \\leq s + 1\\\\
                             (1 + \\frac{\\kappa}{\\lambda})^{m - 1 - s}                                                                                              & \\qquad \\text{if}\\quad s + 2 \\leq m \\leq Q\\\\
-                            a_{s + 1}(1 + \\frac{\\kappa}{\\lambda})^{m - 1 - s} - \\sum_{k=1}^{m - 1 - Q} a_{k}(1 + \\frac{\\kappa}{\\lambda})^{m - 1 - Q - k}      & \\qquad \\text{if}\\quad Q + 1 \\leq m \\leq S\\\\
+                            a_{s + 1}(1 + \\frac{\\kappa}{\\lambda})^{m - 1 - s} - \\frac{\\nu}{\\lambda} \\sum_{k=2}^{m - 1 - Q} a_{k}(1 + \\frac{\\kappa}{\\lambda})^{m - 1 - Q - k}      & \\qquad \\text{if}\\quad Q + 1 \\leq m \\leq S\\\\
                         \\end{cases}
                 \\`} />
 
@@ -158,7 +161,7 @@ export const Calc4 = () => {
 
 
             <MathJax.Node formula={`\\ 
-                    p(0) = \\frac{1 + \\frac{\\kappa}{\\lambda} \\sum_{m=1}^{S}a_{m}}{1 + (\\frac{\\kappa + \\nu}{\\lambda}) \\sum_{m=1}^{S}a_{m} - \\sum_{m=Q+1}^{S}b_{m}}
+                    p(0) = \\frac{1 + \\frac{\\kappa}{\\lambda} \\sum_{m=2}^{S}a_{m}}{1 + (\\frac{\\kappa + \\nu}{\\lambda}) \\sum_{m=2}^{S}a_{m} - \\sum_{m=Q+1}^{S}b_{m}}
                 \\`} />
 
 
