@@ -15,10 +15,11 @@ export const Calc5 = () => {
     const [S, set_S] = useState(5)
     const [R, set_R] = useState(4)
     const [phi1, set_phi1] = useState(1)
+    const [phi2, set_phi2] = useState(1)
     
     // Results
     const [run, set_Run] = useState(true)
-    const [res, set_res] = useState(new Array(4).fill(0))
+    const [res, set_res] = useState(new Array(6).fill(0))
     
     const onChange = (e, setState) => {
         setState(e.target.value)
@@ -34,6 +35,7 @@ export const Calc5 = () => {
         set_S(+S)
         set_R(+R)
         set_phi1(+phi1)
+        set_phi2(+phi2)
         
         set_Run(!run)
     }
@@ -51,33 +53,59 @@ export const Calc5 = () => {
         }
     }
     
-    // Merged model probabilities
-    const d = () => (nu + kappa) / (mu * (1 - rho(0, 0)))
-    const b = () => kappa / (mu * (1 - rho(0, 0)))
+    // Calculate Q
+    const Q = () => S - s
     
-    const a = (m) => {
-        if (1 <= m && m <= s + 1) {
-            return Math.pow(1 + d(), m - 1)
-        } else if (s + 1 < m && m <= S) {
-            return Math.pow(1 + d(), s) * Math.pow(1 + b(), m - s - 1)
+    // Coefficients for state probabilities
+    const a = (j) => {
+        if (j <= s + 1) {
+            // For j ≤ s+1, return the original value
+            return Math.pow(1 + ((nu + kappa) / mu), j - 1)
+        } else if (j > s + 1) {
+            // For j > s+1, use the new formula from the image
+            const term1 = a(s + 1) * Math.pow(1 + (kappa / mu), j - s)
+            
+            // Calculate the sum term
+            let sumTerm = 0
+            for (let k = 1; k <= j - Q(); k++) {
+                sumTerm += a(k) * Math.pow(1 + (kappa / mu), j - Q() - k) * (nu / mu)
+            }
+            
+            return term1 - sumTerm
         }
         return 0
     }
     
-    const c = () => {
+    const b = (j) => {
+        if (j === 0) return 0
+        return (nu / mu) * Math.pow(1 + (kappa / mu), j - Q())
+    }
+    
+    // Calculate sums for pi(0) formula
+    const sumA = () => {
         let sum = 0
-        for (let i = 1; i <= S; i++) {
-            sum += a(i)
+        for (let j = 1; j <= S; j++) {
+            sum += a(j)
         }
         return sum
     }
     
-    // Calculating probability distribution
+    const sumB = () => {
+        let sum = 0
+        for (let j = Q() + 1; j <= S; j++) {
+            sum += b(j)
+        }
+        return sum
+    }
+    
+    // Calculating probability distribution based on new formulas
     const pi = (m) => {
         if (m === 0) {
-            return (1 + b() * c()) / (1 + d() * c())
+            // Formula (24) from the image
+            return (1 + (kappa / mu) * sumA()) / (1 + ((kappa + nu) / mu) * sumA() - sumB())
         } else if (m === 1) {
-            return d() * pi(0) - b()
+            // Formula (23) from the image
+            return pi(0) * ((kappa + nu) / mu) - (kappa / mu)
         } else if (2 <= m && m <= S) {
             return a(m) * pi(1)
         }
@@ -113,8 +141,17 @@ export const Calc5 = () => {
         return sum;
     }
     
+    const LR = () => {
+        const term1 = lambda_plus * phi2 * pi(0) * (1 - rho(0, 0))
+        const term2 = lambda_plus * rho(0, R) * pi(0)
+        const term3 = lambda_plus * (1 - pi(0)) * rho(R, 0)
+        const term4 = lambda_minus * (pi(0) * (1 - rho(0, 0)) + (1 - pi(0)) * (1 - rho(0, 0)))
+        
+        return term1 + term2 + term3 + term4
+    }
+    
     useEffect(() => {
-        set_res([RR(), pi(0), S_av(), L_av()])
+        set_res([RR(), pi(0), S_av(), V_av(), L_av(), LR()])
     }, [run])
     
     return (
@@ -158,6 +195,10 @@ export const Calc5 = () => {
                         <input type='text' name='phi1' value={phi1} onChange={(e) => onChange(e, set_phi1)} />
                     </div>
                     <div className={styDock.formInput}>
+                        <label><MathJax.Node formula={`\\varphi_2`} /></label>
+                        <input type='text' name='phi2' value={phi2} onChange={(e) => onChange(e, set_phi2)} />
+                    </div>
+                    <div className={styDock.formInput}>
                         <button onClick={() => calc()}>Go</button>
                     </div>
                 </div>
@@ -168,7 +209,9 @@ export const Calc5 = () => {
                     RR = ${res[0]} \\\\
                     P_{l} = ${res[1]} \\\\
                     S_{av} = ${res[2]} \\\\
-                    L_{av} = ${res[3]} \\\\
+                    V_{av} = ${res[3]} \\\\
+                    L_{av} = ${res[4]} \\\\
+                    LR = ${res[5]} \\\\
                 \\`} />
             </div>
 
@@ -183,27 +226,26 @@ export const Calc5 = () => {
                         \\end{cases}
                 \\`} />
 
+                <MathJax.Node formula={`Q = S - s`} />
+
                 <MathJax.Node formula={`\\
-                    d = \\frac{\\nu + \\kappa}{\\mu(1-\\rho(0))}, b = \\frac{\\kappa}{\\mu(1-\\rho(0))}
+                    a_{j+1} = a_{s+1}\\left(1+\\frac{\\kappa}{\\mu}\\right)^{j-s} - \\sum_{k=1}^{j-Q}a_k\\left(1+\\frac{\\kappa}{\\mu}\\right)^{j-Q-k}\\left(\\frac{\\nu}{\\mu}\\right) 
                 \\`} />
 
                 <MathJax.Node formula={`\\
-                    a_m = 
-                        \\begin{cases}
-                            (1+d)^{m-1}, & \\text{if } 1 \\leq m \\leq s+1 \\\\
-                            (1+d)^s(1+b)^{m-s-1}, & \\text{if } s+1 < m \\leq S
-                        \\end{cases}
+                    b_{j+1} = \\left(\\frac{\\nu}{\\mu}\\right)\\left(1+\\frac{\\kappa}{\\mu}\\right)^{j-Q}
                 \\`} />
 
-                <MathJax.Node formula={`c = \\sum_{m=1}^{S} a_m`} />
+                <MathJax.Node formula={`\\
+                    \\pi(0) = \\frac{1+\\frac{\\kappa}{\\mu}\\sum_{j=1}^{S}a_j}{1+\\frac{\\kappa+\\nu}{\\mu}\\sum_{j=1}^{S}a_j-\\sum_{j=Q+1}^{S}b_j}
+                \\`} />
 
                 <MathJax.Node formula={`\\
-                    \\pi(m) = 
-                        \\begin{cases}
-                            \\frac{1+bc}{1+dc}, & \\text{if } m = 0 \\\\
-                            d\\pi(0) - b, & \\text{if } m = 1 \\\\
-                            a_m\\pi(1), & \\text{if } 2 \\leq m \\leq S
-                        \\end{cases}
+                    \\pi(1) = \\pi(0)\\left(\\frac{\\kappa+\\nu}{\\mu}\\right)-\\left(\\frac{\\kappa}{\\mu}\\right)
+                \\`} />
+
+                <MathJax.Node formula={`\\
+                    \\pi(m) = a_m\\pi(1) \\quad \\text{for } 2 \\leq m \\leq S
                 \\`} />
 
                 <MathJax.Node formula={`\\
@@ -215,11 +257,15 @@ export const Calc5 = () => {
                 \\`} />
 
                 <MathJax.Node formula={`\\
-                    RR = \\mu(1-\\rho(0))\\pi(s+1) + \\kappa(1-\\pi(0))
+                    RR = \\mu(1-\\rho(0,0))\\pi(s+1) + \\kappa(1-\\pi(0))
                 \\`} />
 
                 <MathJax.Node formula={`\\
-                    L_{av} = \\sum_{n=1}^{R} n(\\rho_0(n)\\pi(0) + \\rho(n)(1-\\pi(0)))
+                    L_{av} = \\sum_{n=1}^{R} n(\\rho_0(n)\\pi(0) + \\rho(n,0)(1-\\pi(0)))
+                \\`} />
+
+                <MathJax.Node formula={`\\
+                    LR = \\lambda^+ \\varphi_2 \\pi(0)(1-\\rho_0(0)) + \\lambda^+ \\rho_0(R)\\pi(0) + \\lambda^+(1-\\pi(0))\\rho(R) + \\lambda^-(\\pi(0)(1-\\rho_0(0))+(1-\\pi(0))(1-\\rho(0)))
                 \\`} />
             </div>
         </div>
