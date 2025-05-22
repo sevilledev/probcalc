@@ -135,7 +135,7 @@ export const Calc5 = () => {
         let sum = 0;
         for (let n = 1; n <= R; n++) {
             const term1 = rho(0, n) * pi(0);
-            const term2 = rho(n, 0) * (1 - pi(0));
+            const term2 = rho(0, n) * (1 - pi(0));
             sum += n * (term1 + term2);
         }
         return sum;
@@ -144,7 +144,7 @@ export const Calc5 = () => {
     const LR = () => {
         const term1 = lambda_plus * phi2 * pi(0) * (1 - rho(0, 0))
         const term2 = lambda_plus * rho(0, R) * pi(0)
-        const term3 = lambda_plus * (1 - pi(0)) * rho(R, 0)
+        const term3 = lambda_plus * (1 - pi(0)) * rho(0, R)
         const term4 = lambda_minus * (pi(0) * (1 - rho(0, 0)) + (1 - pi(0)) * (1 - rho(0, 0)))
         
         return term1 + term2 + term3 + term4
@@ -261,11 +261,11 @@ export const Calc5 = () => {
                 \\`} />
 
                 <MathJax.Node formula={`\\
-                    L_{av} = \\sum_{n=1}^{R} n(\\rho_0(n)\\pi(0) + \\rho(n,0)(1-\\pi(0)))
+                    L_{av} = \\sum_{n=1}^{R} n(\\rho_0(n)\\pi(0) + \\rho_0(n)(1-\\pi(0)))
                 \\`} />
 
                 <MathJax.Node formula={`\\
-                    LR = \\lambda^+ \\varphi_2 \\pi(0)(1-\\rho_0(0)) + \\lambda^+ \\rho_0(R)\\pi(0) + \\lambda^+(1-\\pi(0))\\rho(R) + \\lambda^-(\\pi(0)(1-\\rho_0(0))+(1-\\pi(0))(1-\\rho(0)))
+                    LR = \\lambda^+ \\varphi_2 \\pi(0)(1-\\rho_0(0)) + \\lambda^+ \\rho_0(R)\\pi(0) + \\lambda^+(1-\\pi(0))\\rho_0(R) + \\lambda^-(\\pi(0)(1-\\rho_0(0))+(1-\\pi(0))(1-\\rho_0(0)))
                 \\`} />
             </div>
         </div>
