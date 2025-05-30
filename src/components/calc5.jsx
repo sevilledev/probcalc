@@ -16,15 +16,15 @@ export const Calc5 = () => {
     const [R, set_R] = useState(4)
     const [phi1, set_phi1] = useState(1)
     const [phi2, set_phi2] = useState(1)
-    
+
     // Results
     const [run, set_Run] = useState(true)
     const [res, set_res] = useState(new Array(6).fill(0))
-    
+
     const onChange = (e, setState) => {
         setState(e.target.value)
     }
-    
+
     const calc = () => {
         set_lambda_plus(+lambda_plus)
         set_lambda_minus(+lambda_minus)
@@ -36,14 +36,14 @@ export const Calc5 = () => {
         set_R(+R)
         set_phi1(+phi1)
         set_phi2(+phi2)
-        
+
         set_Run(!run)
     }
-    
+
     // Calculations
     const theta0 = () => (lambda_plus * phi1) / lambda_minus
     const theta = () => theta0() / phi1
-    
+
     // State probabilities within split models
     const rho = (m, n) => {
         if (m > 0) {
@@ -52,10 +52,10 @@ export const Calc5 = () => {
             return Math.pow(theta0(), n) * (1 - theta0()) / (1 - Math.pow(theta0(), R + 1))
         }
     }
-    
+
     // Calculate Q
     const Q = () => S - s
-    
+
     // Coefficients for state probabilities
     const a = (j) => {
         if (j <= s + 1) {
@@ -64,23 +64,23 @@ export const Calc5 = () => {
         } else if (j > s + 1) {
             // For j > s+1, use the new formula from the image
             const term1 = a(s + 1) * Math.pow(1 + (kappa / mu), j - s)
-            
+
             // Calculate the sum term
             let sumTerm = 0
             for (let k = 1; k <= j - Q(); k++) {
                 sumTerm += a(k) * Math.pow(1 + (kappa / mu), j - Q() - k) * (nu / mu)
             }
-            
+
             return term1 - sumTerm
         }
         return 0
     }
-    
+
     const b = (j) => {
         if (j === 0) return 0
         return (nu / mu) * Math.pow(1 + (kappa / mu), j - Q())
     }
-    
+
     // Calculate sums for pi(0) formula
     const sumA = () => {
         let sum = 0
@@ -89,7 +89,7 @@ export const Calc5 = () => {
         }
         return sum
     }
-    
+
     const sumB = () => {
         let sum = 0
         for (let j = Q() + 1; j <= S; j++) {
@@ -97,7 +97,7 @@ export const Calc5 = () => {
         }
         return sum
     }
-    
+
     // Calculating probability distribution based on new formulas
     const pi = (m) => {
         if (m === 0) {
@@ -111,7 +111,7 @@ export const Calc5 = () => {
         }
         return 0
     }
-    
+
     // Performance measures
     const S_av = () => {
         let sum = 0
@@ -120,7 +120,7 @@ export const Calc5 = () => {
         }
         return sum
     }
-    
+
     const V_av = () => {
         let sum = 0
         for (let m = 0; m <= S; m++) {
@@ -128,9 +128,9 @@ export const Calc5 = () => {
         }
         return (S - s) * sum
     }
-    
+
     const RR = () => mu * (1 - rho(0, 0)) * pi(s + 1) + kappa * (1 - pi(0))
-    
+
     const L_av = () => {
         let sum = 0;
         for (let n = 1; n <= R; n++) {
@@ -140,20 +140,20 @@ export const Calc5 = () => {
         }
         return sum;
     }
-    
+
     const LR = () => {
         const term1 = lambda_plus * phi2 * pi(0) * (1 - rho(0, 0))
         const term2 = lambda_plus * rho(0, R) * pi(0)
         const term3 = lambda_plus * (1 - pi(0)) * rho(0, R)
         const term4 = lambda_minus * (pi(0) * (1 - rho(0, 0)) + (1 - pi(0)) * (1 - rho(0, 0)))
-        
+
         return term1 + term2 + term3 + term4
     }
-    
+
     useEffect(() => {
         set_res([RR(), pi(0), S_av(), V_av(), L_av(), LR()])
     }, [run])
-    
+
     return (
         <div className={styApp.container}>
             <Dock>
@@ -205,7 +205,7 @@ export const Calc5 = () => {
             </Dock>
 
             <div className={styApp.results}>
-                <MathJax.Node formula={`\\ 
+                <MathJax.Node formula={`\\
                     RR = ${res[0]} \\\\
                     P_{l} = ${res[1]} \\\\
                     S_{av} = ${res[2]} \\\\
@@ -219,7 +219,7 @@ export const Calc5 = () => {
                 <MathJax.Node formula={`\\theta_0 = \\frac{\\lambda^+ \\varphi_1}{\\lambda^-}, \\theta = \\frac{\\theta_0}{\\varphi_1}`} />
 
                 <MathJax.Node formula={`\\
-                    \\rho_m(n) = 
+                    \\rho_m(n) =
                         \\begin{cases}
                             \\theta^n \\frac{1-\\theta}{1-\\theta^{R+1}}, & m > 0, n = 0,1,\\ldots,R \\\\
                             \\theta_0^n \\frac{1-\\theta_0}{1-\\theta_0^{R+1}}, & m = 0, n = 0,1,\\ldots,R
