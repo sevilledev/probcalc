@@ -14,7 +14,7 @@ export const Calc5 = () => {
     const [s, set_s] = useState(3)
     const [S, set_S] = useState(5)
     const [R, set_R] = useState(4)
-    const [phi1, set_phi1] = useState(1)
+    const [phi1, set_phi1] = useState(0.1)
 
     // Results
     const [run, set_Run] = useState(true)
@@ -130,7 +130,7 @@ export const Calc5 = () => {
         return (S - s) * sum
     }
 
-    const RR = () => mu * (1 - rho(0, 0)) * pi(s + 1) + kappa * (1 - pi(0))
+    const RR = () => mu * (1 - rho(1, 0)) * pi(s + 1) + kappa * (1 - pi(0))
 
     const L_av = () => {
         let sum = 0;
@@ -254,7 +254,7 @@ export const Calc5 = () => {
                 \\`} />
 
                 <MathJax.Node formula={`\\
-                    RR = \\mu(1-\\rho(0,0))\\pi(s+1) + \\kappa(1-\\pi(0))
+                    RR = \\mu(1-\\rho(0))\\pi(s+1) + \\kappa(1-\\pi(0))
                 \\`} />
 
                 <MathJax.Node formula={`\\
