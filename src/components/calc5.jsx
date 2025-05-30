@@ -15,7 +15,6 @@ export const Calc5 = () => {
     const [S, set_S] = useState(5)
     const [R, set_R] = useState(4)
     const [phi1, set_phi1] = useState(1)
-    const [phi2, set_phi2] = useState(1)
 
     // Results
     const [run, set_Run] = useState(true)
@@ -35,10 +34,12 @@ export const Calc5 = () => {
         set_S(+S)
         set_R(+R)
         set_phi1(+phi1)
-        set_phi2(+phi2)
 
         set_Run(!run)
     }
+
+    // Calculate phi2 as 1 - phi1
+    const phi2 = () => 1 - phi1
 
     // Calculations
     const theta0 = () => (lambda_plus * phi1) / lambda_minus
@@ -142,7 +143,7 @@ export const Calc5 = () => {
     }
 
     const LR = () => {
-        const term1 = lambda_plus * phi2 * pi(0) * (1 - rho(0, 0))
+        const term1 = lambda_plus * phi2() * pi(0) * (1 - rho(0, 0))
         const term2 = lambda_plus * rho(0, R) * pi(0)
         const term3 = lambda_plus * (1 - pi(0)) * rho(0, R)
         const term4 = lambda_minus * (pi(0) * (1 - rho(0, 0)) + (1 - pi(0)) * (1 - rho(0, 0)))
@@ -193,10 +194,6 @@ export const Calc5 = () => {
                     <div className={styDock.formInput}>
                         <label><MathJax.Node formula={`\\varphi_1`} /></label>
                         <input type='text' name='phi1' value={phi1} onChange={(e) => onChange(e, set_phi1)} />
-                    </div>
-                    <div className={styDock.formInput}>
-                        <label><MathJax.Node formula={`\\varphi_2`} /></label>
-                        <input type='text' name='phi2' value={phi2} onChange={(e) => onChange(e, set_phi2)} />
                     </div>
                     <div className={styDock.formInput}>
                         <button onClick={() => calc()}>Go</button>
