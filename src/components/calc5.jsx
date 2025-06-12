@@ -1,19 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import MathJax from 'react-mathjax'
 import { Dock } from './dock'
 import styApp from '../styles/app.module.css'
 import styDock from '../styles/dock.module.css'
 
+// Log wrapper function
+const log = (message, data = null) => {
+    if (data === null) {
+        console.log(message)
+    } else {
+        console.log(message, JSON.stringify(data, null, 2))
+    }
+}
+
 export const Calc5 = () => {
     // Parameters
-    const [lambda_plus, set_lambda_plus] = useState(2)
+    const [lambda_plus, set_lambda_plus] = useState(3.2)
     const [lambda_minus, set_lambda_minus] = useState(1)
     const [mu, set_mu] = useState(3)
-    const [kappa, set_kappa] = useState(1)
+    const [kappa, set_kappa] = useState(0.1)
     const [nu, set_nu] = useState(2)
-    const [s, set_s] = useState(3)
+    const [s, set_s] = useState(2)
     const [S, set_S] = useState(5)
-    const [R, set_R] = useState(4)
+    const [R, set_R] = useState(7)
     const [phi1, set_phi1] = useState(0.1)
 
     // Results
@@ -25,6 +34,17 @@ export const Calc5 = () => {
     }
 
     const calc = () => {
+        log('Calculating with values:', {
+            lambda_plus: +lambda_plus,
+            lambda_minus: +lambda_minus,
+            mu: +mu,
+            kappa: +kappa,
+            nu: +nu,
+            s: +s,
+            S: +S,
+            R: +R,
+            phi1: +phi1
+        })
         set_lambda_plus(+lambda_plus)
         set_lambda_minus(+lambda_minus)
         set_mu(+mu)
@@ -39,119 +59,164 @@ export const Calc5 = () => {
     }
 
     // Calculate phi2 as 1 - phi1
-    const phi2 = () => 1 - phi1
+    const phi2 = 1 - phi1
 
-    // Calculations
-    const theta0 = () => (lambda_plus * phi1) / lambda_minus
-    const theta = () => theta0() / phi1
+    // Basic calculations
+    const theta0 = (lambda_plus * phi1) / lambda_minus
+    const theta = theta0 / phi1
 
-    // State probabilities within split models
+    log('Intermediate values:', { phi2, theta0, theta })
+
+    // rho calculation
     const rho = (m, n) => {
         if (m > 0) {
-            return Math.pow(theta(), n) * (1 - theta()) / (1 - Math.pow(theta(), R + 1))
+            return Math.pow(theta, n) * (1 - theta) / (1 - Math.pow(theta, R + 1))
         } else {
-            return Math.pow(theta0(), n) * (1 - theta0()) / (1 - Math.pow(theta0(), R + 1))
+            return Math.pow(theta0, n) * (1 - theta0) / (1 - Math.pow(theta0, R + 1))
         }
     }
 
     // Calculate Q
     const Q = () => S - s
 
-    // Coefficients for state probabilities
-    const a = (j) => {
-        if (j <= s + 1) {
-            // For j ≤ s+1, return the original value
-            return Math.pow(1 + ((nu + kappa) / mu), j - 1)
-        } else if (j > s + 1) {
-            // For j > s+1, use the new formula from the image
-            const term1 = a(s + 1) * Math.pow(1 + (kappa / mu), j - s)
-
-            // Calculate the sum term
-            let sumTerm = 0
-            for (let k = 1; k <= j - Q(); k++) {
-                sumTerm += a(k) * Math.pow(1 + (kappa / mu), j - Q() - k) * (nu / mu)
+    // Memoize intermediate calculations
+    const memoizedA = useMemo(() => {
+        const cache = new Map()
+        // Clear cache when dependencies change
+        cache.clear()
+        return (j) => {
+            if (cache.has(j)) return cache.get(j)
+            let result
+            if (j === 0) result = 0
+            else if (j === 1) result = 1
+            else if (j <= s + 1) {
+                result = Math.pow(1 + (nu/mu + kappa/mu), j - 1)
+            } else {
+                const term1 = memoizedA(s + 1) * Math.pow(1 + kappa/mu, j - s)
+                let sumTerm = 0
+                for (let k = 1; k <= j - Q(); k++) {
+                    sumTerm += memoizedA(k) * Math.pow(1 + kappa/mu, j - Q() - k) * (nu/mu)
+                }
+                result = term1 - sumTerm
             }
-
-            return term1 - sumTerm
+            cache.set(j, result)
+            return result
         }
-        return 0
-    }
+    }, [s, nu, mu, kappa, lambda_plus, lambda_minus])
 
-    const b = (j) => {
-        if (j === 0) return 0
-        return (nu / mu) * Math.pow(1 + (kappa / mu), j - Q())
-    }
-
-    // Calculate sums for pi(0) formula
-    const sumA = () => {
-        let sum = 0
-        for (let j = 1; j <= S; j++) {
-            sum += a(j)
+    const memoizedB = useMemo(() => {
+        const cache = new Map()
+        // Clear cache when dependencies change
+        cache.clear()
+        return (j) => {
+            if (cache.has(j)) return cache.get(j)
+            const result = j <= Q() ? 0 : (nu/mu) * Math.pow(1 + kappa/mu, j - Q())
+            cache.set(j, result)
+            return result
         }
-        return sum
-    }
+    }, [Q, nu, mu, kappa, lambda_plus, lambda_minus])
 
-    const sumB = () => {
-        let sum = 0
-        for (let j = Q() + 1; j <= S; j++) {
-            sum += b(j)
+    // Memoize pi function
+    const memoizedPi = useMemo(() => {
+        const cache = new Map()
+        // Clear cache when dependencies change
+        cache.clear()
+        return (m) => {
+            if (cache.has(m)) return cache.get(m)
+            let result
+            if (m === 0) {
+                let sumA = 0
+                let sumB = 0
+                for (let j = 1; j <= S; j++) {
+                    sumA += memoizedA(j)
+                }
+                for (let j = Q() + 1; j <= S; j++) {
+                    sumB += memoizedB(j)
+                }
+                result = (1 + (kappa/mu) * sumA) / (1 + ((kappa + nu)/mu) * sumA - sumB)
+                log('pi(0) calculation:', {
+                    sumA,
+                    sumB,
+                    kappa,
+                    mu,
+                    nu,
+                    result
+                })
+            } else if (m === 1) {
+                result = memoizedPi(0) * ((kappa + nu)/mu) - (kappa/mu)
+            } else {
+                result = memoizedA(m) * memoizedPi(1)
+            }
+            cache.set(m, result)
+            return result
         }
-        return sum
-    }
+    }, [memoizedA, memoizedB, S, Q, kappa, mu, nu, lambda_plus, lambda_minus])
 
-    // Calculating probability distribution based on new formulas
-    const pi = (m) => {
-        if (m === 0) {
-            // Formula (24) from the image
-            return (1 + (kappa / mu) * sumA()) / (1 + ((kappa + nu) / mu) * sumA() - sumB())
-        } else if (m === 1) {
-            // Formula (23) from the image
-            return pi(0) * ((kappa + nu) / mu) - (kappa / mu)
-        } else if (2 <= m && m <= S) {
-            return a(m) * pi(1)
-        }
-        return 0
-    }
+    // Update the pi function to use the memoized version
+    const pi = memoizedPi
 
     // Performance measures
     const S_av = () => {
         let sum = 0
+        const terms = []
         for (let m = 1; m <= S; m++) {
-            sum += m * pi(m)
+            const term = m * pi(m)
+            terms.push({ m, pi_m: pi(m), term })
+            sum += term
         }
+        log('S_av calculation:', { terms, sum })
         return sum
     }
 
     const V_av = () => {
         let sum = 0
-        for (let m = 0; m <= S; m++) {
-            sum += pi(m)
+        const terms = []
+        for (let m = 0; m <= s; m++) {
+            const term = pi(m)
+            terms.push({ m, pi_m: pi(m), term })
+            sum += term
         }
-        return (S - s) * sum
+        const result = (S - s) * sum
+        log('V_av calculation:', { terms, sum, result })
+        return result
     }
 
-    const RR = () => mu * (1 - rho(1, 0)) * pi(s + 1) + kappa * (1 - pi(0))
+    const RR = () => {
+        const result = mu * (1 - rho(1, 0)) * pi(s + 1) + kappa * (1 - pi(0))
+        log('RR calculated:', result)
+        return result
+    }
 
     const L_av = () => {
-        let sum = 0;
+        let sum = 0
         for (let n = 1; n <= R; n++) {
-            const term1 = rho(0, n) * pi(0);
-            const term2 = rho(1, n) * (1 - pi(0));
-            sum += n * (term1 + term2);
+            const term1 = rho(0, n) * pi(0)
+            const term2 = rho(1, n) * (1 - pi(0))
+            sum += n * (term1 + term2)
         }
-        return sum;
+        return sum
     }
 
     const LR = () => {
-        const term1 = lambda_plus * phi2() * pi(0) * (1 - rho(0, 0))
+        const term1 = lambda_plus * phi2 * pi(0) * (1 - rho(0, 0))
         const term2 = lambda_plus * rho(0, R) * pi(0)
         const term3 = lambda_plus * (1 - pi(0)) * rho(1, R)
         const term4 = lambda_minus * (pi(0) * (1 - rho(0, 0)) + (1 - pi(0)) * (1 - rho(1, 0)))
 
-        return term1 + term2 + term3 + term4
+        const result = term1 + term2 + term3 + term4
+        log('LR calculated:', { result, term1, term2, term3, term4 })
+        return result
     }
 
     useEffect(() => {
+        log('Final results:', {
+            RR: RR(),
+            pi0: pi(0),
+            S_av: S_av(),
+            V_av: V_av(),
+            L_av: L_av(),
+            LR: LR()
+        })
         set_res([RR(), pi(0), S_av(), V_av(), L_av(), LR()])
     }, [run])
 
@@ -250,7 +315,7 @@ export const Calc5 = () => {
                 \\`} />
 
                 <MathJax.Node formula={`\\
-                    V_{av} = (S-s)\\sum_{m=0}^{S} \\pi(m)
+                    V_{av} = (S-s)\\sum_{m=0}^{s} \\pi(m)
                 \\`} />
 
                 <MathJax.Node formula={`\\
