@@ -208,6 +208,14 @@ export const Calc5 = () => {
         return result
     }
 
+    const sumPi = () => {
+        let sum = 0
+        for (let m = 0; m <= S; m++) {
+            sum += pi(m)
+        }
+        return sum
+    }
+
     useEffect(() => {
         log('Final results:', {
             RR: RR(),
@@ -215,9 +223,10 @@ export const Calc5 = () => {
             S_av: S_av(),
             V_av: V_av(),
             L_av: L_av(),
-            LR: LR()
+            LR: LR(),
+            sumPi: sumPi()
         })
-        set_res([RR(), pi(0), S_av(), V_av(), L_av(), LR()])
+        set_res([RR(), pi(0), S_av(), V_av(), L_av(), LR(), sumPi()])
     }, [run])
 
     return (
@@ -274,6 +283,7 @@ export const Calc5 = () => {
                     V_{av} = ${res[3]} \\\\
                     L_{av} = ${res[4]} \\\\
                     LR = ${res[5]} \\\\
+                    \\sum_{m=0}^{S} \\pi(m) = ${res[6]} \\\\
                 \\`} />
             </div>
 
