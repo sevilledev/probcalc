@@ -127,7 +127,7 @@ export const Calc5 = () => {
             if (m === 0) {
                 let sumA = 0
                 let sumB = 0
-                for (let j = 1; j <= S; j++) {
+                for (let j = 2; j <= S; j++) {
                     sumA += memoizedA(j)
                 }
                 for (let j = Q() + 1; j <= S; j++) {
@@ -309,7 +309,7 @@ export const Calc5 = () => {
                 \\`} />
 
                 <MathJax.Node formula={`\\
-                    \\pi(0) = \\frac{1+\\frac{\\kappa}{\\mu}\\sum_{j=1}^{S}a_j}{1+\\frac{\\kappa+\\nu}{\\mu}\\sum_{j=1}^{S}a_j-\\sum_{j=Q+1}^{S}b_j}
+                    \\pi(0) = \\frac{1+\\frac{\\kappa}{\\mu}\\sum_{j=2}^{S}a_j}{1+\\frac{\\kappa+\\nu}{\\mu}\\sum_{j=2}^{S}a_j-\\sum_{j=Q+1}^{S}b_j}
                 \\`} />
 
                 <MathJax.Node formula={`\\
