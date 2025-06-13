@@ -20,9 +20,9 @@ export const Calc5 = () => {
     const [mu, set_mu] = useState(3)
     const [kappa, set_kappa] = useState(0.1)
     const [nu, set_nu] = useState(2)
-    const [s, set_s] = useState(2)
-    const [S, set_S] = useState(5)
-    const [R, set_R] = useState(7)
+    const [s, set_s] = useState(1)
+    const [S, set_S] = useState(3)
+    const [R, set_R] = useState(4)
     const [phi1, set_phi1] = useState(0.1)
 
     // Results
