@@ -76,6 +76,10 @@ export const Calc5 = () => {
         }
     }
 
+    // Calculate effective mu
+    const rho0 = rho(0, 0)
+    const mu_eff = mu * (1 - rho0)
+
     // Calculate Q
     const Q = () => S - s
 
@@ -90,19 +94,19 @@ export const Calc5 = () => {
             if (j === 0) result = 0
             else if (j === 1) result = 1
             else if (j <= s + 1) {
-                result = Math.pow(1 + (nu/mu + kappa/mu), j - 1)
+                result = Math.pow(1 + (nu/mu_eff + kappa/mu_eff), j - 1)
             } else {
-                const term1 = memoizedA(s + 1) * Math.pow(1 + kappa/mu, j - s)
+                const term1 = memoizedA(s + 1) * Math.pow(1 + kappa/mu_eff, j - s)
                 let sumTerm = 0
                 for (let k = 1; k <= j - Q(); k++) {
-                    sumTerm += memoizedA(k) * Math.pow(1 + kappa/mu, j - Q() - k) * (nu/mu)
+                    sumTerm += memoizedA(k) * Math.pow(1 + kappa/mu_eff, j - Q() - k) * (nu/mu_eff)
                 }
                 result = term1 - sumTerm
             }
             cache.set(j, result)
             return result
         }
-    }, [s, nu, mu, kappa, lambda_plus, lambda_minus])
+    }, [s, nu, mu_eff, kappa, lambda_plus, lambda_minus])
 
     const memoizedB = useMemo(() => {
         const cache = new Map()
@@ -110,11 +114,11 @@ export const Calc5 = () => {
         cache.clear()
         return (j) => {
             if (cache.has(j)) return cache.get(j)
-            const result = j <= Q() ? 0 : (nu/mu) * Math.pow(1 + kappa/mu, j - Q())
+            const result = j <= Q() ? 0 : (nu/mu_eff) * Math.pow(1 + kappa/mu_eff, j - Q())
             cache.set(j, result)
             return result
         }
-    }, [Q, nu, mu, kappa, lambda_plus, lambda_minus])
+    }, [Q, nu, mu_eff, kappa, lambda_plus, lambda_minus])
 
     // Memoize pi function
     const memoizedPi = useMemo(() => {
@@ -127,30 +131,30 @@ export const Calc5 = () => {
             if (m === 0) {
                 let sumA = 0
                 let sumB = 0
-                for (let j = 2; j <= S; j++) {
+                for (let j = 1; j <= S; j++) {
                     sumA += memoizedA(j)
                 }
                 for (let j = Q() + 1; j <= S; j++) {
                     sumB += memoizedB(j)
                 }
-                result = (1 + (kappa/mu) * sumA) / (1 + ((kappa + nu)/mu) * sumA - sumB)
+                result = (1 + (kappa/mu_eff) * sumA) / (1 + ((kappa + nu)/mu_eff) * sumA - sumB)
                 log('pi(0) calculation:', {
                     sumA,
                     sumB,
                     kappa,
-                    mu,
+                    mu_eff,
                     nu,
                     result
                 })
             } else if (m === 1) {
-                result = memoizedPi(0) * ((kappa + nu)/mu) - (kappa/mu)
+                result = memoizedPi(0) * ((kappa + nu)/mu_eff) - (kappa/mu_eff)
             } else {
                 result = memoizedA(m) * memoizedPi(1)
             }
             cache.set(m, result)
             return result
         }
-    }, [memoizedA, memoizedB, S, Q, kappa, mu, nu, lambda_plus, lambda_minus])
+    }, [memoizedA, memoizedB, S, Q, kappa, mu_eff, nu, lambda_plus, lambda_minus])
 
     // Update the pi function to use the memoized version
     const pi = memoizedPi
@@ -182,7 +186,7 @@ export const Calc5 = () => {
     }
 
     const RR = () => {
-        const result = mu * (1 - rho(1, 0)) * pi(s + 1) + kappa * (1 - pi(0))
+        const result = mu_eff * (1 - rho(1, 0)) * pi(s + 1) + kappa * (1 - pi(0))
         log('RR calculated:', result)
         return result
     }
@@ -309,7 +313,7 @@ export const Calc5 = () => {
                 \\`} />
 
                 <MathJax.Node formula={`\\
-                    \\pi(0) = \\frac{1+\\frac{\\kappa}{\\mu}\\sum_{j=2}^{S}a_j}{1+\\frac{\\kappa+\\nu}{\\mu}\\sum_{j=2}^{S}a_j-\\sum_{j=Q+1}^{S}b_j}
+                    \\pi(0) = \\frac{1+\\frac{\\kappa}{\\mu}\\sum_{j=1}^{S}a_j}{1+\\frac{\\kappa+\\nu}{\\mu}\\sum_{j=2}^{S}a_j-\\sum_{j=Q+1}^{S}b_j}
                 \\`} />
 
                 <MathJax.Node formula={`\\
